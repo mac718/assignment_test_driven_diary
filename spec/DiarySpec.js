@@ -1,4 +1,5 @@
 const diary = require('../lib/diary');
+const date = require('date-and-time');
 describe('Diary', () => {
   
   describe('.entries', () => {
@@ -26,6 +27,22 @@ describe('Diary', () => {
     it('Returns a list of entries with the given tag', () => {
       diary.entry("Sup brah! #brahsforever");
       expect(diary.entriesWithTag('brahsforever')).toContain("Sup brah! #brahsforever");
+    })
+  })
+
+  describe('.today', () => {
+    it('Returns a list of entries written today', () =>{
+      let now = new Date();
+      let formattedDate = date.format(now, 'ddd MMM DD YYYY');
+      diary.entry('YO', formattedDate);
+      expect(diary.today()).toContain('YO');
+    })
+
+    it('Does not include entries not written today', () => {
+      let earlierDate = new Date('10/10/10');
+      let earlierDateFormatted = date.format(earlierDate, 'ddd MMM DD YYYY');
+      diary.entry('Sup!', earlierDateFormatted);
+      expect(diary.today()).not.toContain('Sup!');
     })
   })
 })
