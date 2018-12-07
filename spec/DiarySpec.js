@@ -1,5 +1,5 @@
 const diary = require('../lib/diary');
-const date = require('date-and-time');
+const dateAndTime = require('date-and-time');
 describe('Diary', () => {
   
   describe('.entries', () => {
@@ -19,7 +19,9 @@ describe('Diary', () => {
     it('Lists the tags contained in all entries', () => {
       expect(diary.tags()[0]).toEqual(null);
       diary.entry("Sup brah! #brahsforever");
-      expect(diary.tags()[0]).toEqual('brahsforever');
+      diary.entry('NRA forever! #simpsons')
+      expect(diary.tags()).toEqual(['brahsforever', 'simpsons']);
+
     })
   })
 
@@ -28,21 +30,41 @@ describe('Diary', () => {
       diary.entry("Sup brah! #brahsforever");
       expect(diary.entriesWithTag('brahsforever')).toContain("Sup brah! #brahsforever");
     })
+
+    it('Does not return entries without the specified tag', () => {
+      diary.entry("Sup brah! #brahsforever");
+      diary.entry('I have no tag');
+      expect(diary.entriesWithTag('brahsforever')).not.toContain('I have no tag');
+    })
   })
 
   describe('.today', () => {
     it('Returns a list of entries written today', () =>{
       let now = new Date();
-      let formattedDate = date.format(now, 'ddd MMM DD YYYY');
+      let formattedDate = dateAndTime.format(now, 'ddd MMM DD YYYY');
       diary.entry('YO', formattedDate);
       expect(diary.today()).toContain('YO');
     })
 
     it('Does not include entries not written today', () => {
       let earlierDate = new Date('10/10/10');
-      let earlierDateFormatted = date.format(earlierDate, 'ddd MMM DD YYYY');
+      let earlierDateFormatted = dateAndTime.format(earlierDate, 'ddd MMM DD YYYY');
       diary.entry('Sup!', earlierDateFormatted);
       expect(diary.today()).not.toContain('Sup!');
+    })
+  })
+
+  describe('.date', () => {
+    it('Returns a list of entries written on the specified date', () => {
+      diary.entry("Yo, it's the 10th!", new Date('10/10/10'));
+      expect(diary.date('10/10/10')).toContain("Yo, it's the 10th!");
+    })  
+  })
+
+  describe('.search', () => {
+    it('Returns a list of entries containing the search term', () => {
+      diary.entry('Cosmo');
+      expect(diary.search('Cosmo')).toContain('Cosmo');
     })
   })
 })
