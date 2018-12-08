@@ -1,5 +1,7 @@
 const diary = require('../lib/diary');
 const dateAndTime = require('date-and-time');
+const fs = require('fs');
+
 describe('Diary', () => {
   
   describe('.entries', () => {
@@ -65,6 +67,15 @@ describe('Diary', () => {
     it('Returns a list of entries containing the search term', () => {
       diary.entry('Cosmo');
       expect(diary.search('Cosmo')).toContain('Cosmo');
+    })
+  })
+
+  describe('.save', () => {
+    it('persists the current state of the diary to the given file', () => {
+      let savedDiary;
+      diary.save('./diary')
+      savedDiary = fs.readFileSync('./diary.json');
+      expect(JSON.stringify(JSON.parse(savedDiary))).toEqual(JSON.stringify(diary.entriesAndDates()));
     })
   })
 })
