@@ -19,7 +19,6 @@ describe('Diary', () => {
 
   describe('.tags', () => {
     it('Lists the tags contained in all entries', () => {
-      expect(diary.tags()[0]).toEqual(null);
       diary.entry("Sup brah! #brahsforever");
       diary.entry('NRA forever! #simpsons')
       expect(diary.tags()).toEqual(['brahsforever', 'simpsons']);
@@ -65,8 +64,13 @@ describe('Diary', () => {
 
   describe('.search', () => {
     it('Returns a list of entries containing the search term', () => {
-      diary.entry('Cosmo');
-      expect(diary.search('Cosmo')).toContain('Cosmo');
+      diary.entry('Cosmo Kramer');
+      expect(diary.search('Cosmo')).toContain('Cosmo Kramer');
+    })
+
+    it('Does not return entries that do not contain the search term', () => {
+      diary.entry('No match');
+      expect(diary.search('Cosmo')).not.toContain('No match');
     })
   })
 
@@ -75,7 +79,16 @@ describe('Diary', () => {
       let savedDiary;
       diary.save('./diary')
       savedDiary = fs.readFileSync('./diary.json');
-      expect(JSON.stringify(JSON.parse(savedDiary))).toEqual(JSON.stringify(diary.entriesAndDates()));
+      expect(JSON.stringify(JSON.parse(savedDiary))).toEqual(JSON.stringify(diary.entriesWithDates));
+    })
+  })
+
+  describe('.load', () => {
+    it('loads the contents of the given file into the diary', () => {
+      let loadedDiary;
+      diary.load('./otherDiary');
+      loadedDiary = fs.readFileSync('./otherDiary.json');
+      expect(JSON.stringify(JSON.parse(loadedDiary))).toEqual(JSON.stringify(diary.entriesWithDates));
     })
   })
 })
